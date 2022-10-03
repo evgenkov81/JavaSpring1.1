@@ -12,9 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-    final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png",
-            "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html",
-            "/classic.html", "/events.html", "/events.js");
+    final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
     ExecutorService executorService;
 
     public Server(int poolSize) {
@@ -44,13 +42,20 @@ public class Server {
                 return;
             }
 
-            final var path = parts[1];
+            final var pathAndQuery = parts[1];
+            System.out.println("Параметры");
+            var parsResultParams = Request.getQueryParams(pathAndQuery);
+            var path = Request.getQueryParamsPath(pathAndQuery);
+            System.out.println(parsResultParams);
+            System.out.println(path);
             if (!validPaths.contains(path)) {
                 out.write((
-                        "HTTP/1.1 404 Not Found\r\n" +
-                                "Content-Length: 0\r\n" +
-                                "Connection: close\r\n" +
-                                "\r\n"
+                        """
+                                HTTP/1.1 404 Not Found\r
+                                Content-Length: 0\r
+                                Connection: close\r
+                                \r
+                                """
                 ).getBytes());
                 out.flush();
                 return;
